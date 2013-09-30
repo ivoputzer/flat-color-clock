@@ -39,12 +39,6 @@ NSSize displaysize;
     return;
 }
 
-- (float) random_float { return SSRandomFloatBetween(0.0, 1.0); }
-
-- (NSPoint) random_point {
-    return NSPointFromCGPoint(CGPointMake(SSRandomFloatBetween(0.0, displaysize.width), SSRandomFloatBetween(0.0, displaysize.height)));
-}
-
 - (void) set_background_color
 {
     NSDate *current_date = [NSDate date];
