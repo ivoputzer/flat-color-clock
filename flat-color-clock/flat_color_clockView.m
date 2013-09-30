@@ -12,8 +12,6 @@
 
 NSSize displaysize;
 
-NSTextView *current_time;
-
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
