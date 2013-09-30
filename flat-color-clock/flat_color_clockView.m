@@ -10,42 +10,64 @@
 
 @implementation flat_color_clockView
 
-- (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
+NSSize displaysize;
+
+NSTextView *current_time;
+
+- (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
-    if (self) {
-        [self setAnimationTimeInterval:1/30.0];
-    }
+    
+    if (self) [self setAnimationTimeInterval:0.1];
+    
     return self;
 }
 
-- (void)startAnimation
-{
+- (void) startAnimation {
     [super startAnimation];
 }
 
-- (void)stopAnimation
-{
+- (void) stopAnimation {
     [super stopAnimation];
 }
 
-- (void)drawRect:(NSRect)rect
-{
+- (void) drawRect:(NSRect)rect {
     [super drawRect:rect];
 }
 
-- (void)animateOneFrame
-{
+- (void) animateOneFrame {
+    displaysize = [self bounds].size;
+    [self set_background_color];
     return;
 }
 
-- (BOOL)hasConfigureSheet
-{
-    return NO;
+- (float) random_float { return SSRandomFloatBetween(0.0, 1.0); }
+
+- (NSPoint) random_point {
+    return NSPointFromCGPoint(CGPointMake(SSRandomFloatBetween(0.0, displaysize.width), SSRandomFloatBetween(0.0, displaysize.height)));
 }
 
-- (NSWindow*)configureSheet
+- (void) set_background_color
 {
+    NSDate *current_date = [NSDate date];
+    
+    NSDateFormatter *hrs_format = [[NSDateFormatter alloc] init]; [hrs_format setDateFormat:@"HH"];
+    NSDateFormatter *min_format = [[NSDateFormatter alloc] init]; [min_format setDateFormat:@"mm"];
+    NSDateFormatter *sec_format = [[NSDateFormatter alloc] init]; [sec_format setDateFormat:@"ss.SSS"];
+    
+    [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:current_date].floatValue / 23.0f
+                               green:[min_format stringFromDate:current_date].floatValue / 59.0f
+                                blue:[sec_format stringFromDate:current_date].floatValue / 59.0f
+                               alpha:1.0] set];
+    
+    [[NSBezierPath bezierPathWithRect:NSMakeRect(0, 0, displaysize.width, displaysize.height)] fill];
+}
+
+- (BOOL) hasConfigureSheet {
+    return false;
+}
+
+- (NSWindow*) configureSheet {
     return nil;
 }
 
