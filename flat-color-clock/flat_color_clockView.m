@@ -10,8 +10,6 @@
 
 @implementation flat_color_clockView
 
-NSSize displaysize;
-
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
@@ -21,46 +19,53 @@ NSSize displaysize;
     return self;
 }
 
-- (void) startAnimation {
+- (void) startAnimation
+{
     [super startAnimation];
 }
 
-- (void) stopAnimation {
+- (void) stopAnimation
+{
     [super stopAnimation];
 }
 
-- (void) drawRect:(NSRect)rect {
+- (void) drawRect:(NSRect)rect
+{
     [super drawRect:rect];
+    
+    NSDate *current_date = [NSDate date];
+    
+    [self drawBackgroundColor:rect forDate:current_date];
 }
 
-- (void) animateOneFrame {
-    displaysize = [self bounds].size;
-    [self set_background_color];
+- (void) animateOneFrame
+{
+    [self setNeedsDisplay:true]; // redraw each time
+
     return;
 }
 
-- (void) set_background_color
+- (BOOL) hasConfigureSheet
 {
-    NSDate *current_date = [NSDate date];
-    
+    return false;
+}
+
+- (NSWindow*) configureSheet
+{
+    return nil;
+}
+
+- (void) drawBackgroundColor:(NSRect) rect forDate: (NSDate*) date
+{
     NSDateFormatter *hrs_format = [[NSDateFormatter alloc] init]; [hrs_format setDateFormat:@"HH"];
     NSDateFormatter *min_format = [[NSDateFormatter alloc] init]; [min_format setDateFormat:@"mm"];
     NSDateFormatter *sec_format = [[NSDateFormatter alloc] init]; [sec_format setDateFormat:@"ss.SSS"];
     
-    [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:current_date].floatValue / 23.0f
-                               green:[min_format stringFromDate:current_date].floatValue / 59.0f
-                                blue:[sec_format stringFromDate:current_date].floatValue / 59.0f
-                               alpha:1.0] set];
+    [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:date].floatValue / 23.0f
+                               green:[min_format stringFromDate:date].floatValue / 59.0f
+                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set]; // todo // setFill?!
     
-    [[NSBezierPath bezierPathWithRect:NSMakeRect(0, 0, displaysize.width, displaysize.height)] fill];
-}
-
-- (BOOL) hasConfigureSheet {
-    return false;
-}
-
-- (NSWindow*) configureSheet {
-    return nil;
+    [[NSBezierPath bezierPathWithRect:NSMakeRect(0, 0, [self bounds].size.width, [self bounds].size.height)] fill];
 }
 
 @end
