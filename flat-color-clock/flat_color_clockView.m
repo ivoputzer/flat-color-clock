@@ -14,7 +14,10 @@
 {
     self = [super initWithFrame:frame isPreview:isPreview];
     
-    if (self) [self setAnimationTimeInterval:0.1];
+    if (self)
+    {
+        [self setAnimationTimeInterval:0.1];
+    }
     
     return self;
 }
@@ -29,22 +32,6 @@
     [super stopAnimation];
 }
 
-- (void) drawRect:(NSRect)rect
-{
-    [super drawRect:rect];
-    
-    NSDate *current_date = [NSDate date];
-    
-    [self drawBackgroundColor:rect forDate:current_date];
-}
-
-- (void) animateOneFrame
-{
-    [self setNeedsDisplay:true]; // redraw each time
-
-    return;
-}
-
 - (BOOL) hasConfigureSheet
 {
     return false;
@@ -55,6 +42,48 @@
     return nil;
 }
 
+- (void) animateOneFrame
+{
+    [self setNeedsDisplay:true]; // call drawRect and stuff each frame
+    
+    return;
+}
+
+- (void) drawRect:(NSRect)rect
+{
+    [super drawRect:rect];
+    
+    NSDate *current_date = [NSDate date];
+    
+    [self drawBackgroundColor:rect forDate:current_date];
+    
+    [self drawCurrentTime:rect forDate:current_date];
+
+}
+
+- (void) drawCurrentTime: (NSRect) rect forDate: (NSDate*) date
+{
+    NSDateFormatter *time_format = [[NSDateFormatter alloc] init]; [time_format setDateFormat:@"HH : mm : ss"];
+    
+    NSString *time = [time_format stringFromDate:date];
+    
+    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
+    
+    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
+	
+    [string_attributes setValue:[NSFont fontWithName:@"Verdana" size:30] forKey:NSFontAttributeName];
+    
+    NSSize string_size = [time sizeWithAttributes:string_attributes];
+    
+	NSPoint center_point;
+    
+    center_point.x = (rect.size.width / 2) - (string_size.width / 2);
+	
+    center_point.y = (rect.size.height / 2) - (string_size.height / 2);
+	
+    [time drawAtPoint:center_point withAttributes:string_attributes];
+}
+
 - (void) drawBackgroundColor:(NSRect) rect forDate: (NSDate*) date
 {
     NSDateFormatter *hrs_format = [[NSDateFormatter alloc] init]; [hrs_format setDateFormat:@"HH"];
@@ -63,9 +92,9 @@
     
     [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:date].floatValue / 23.0f
                                green:[min_format stringFromDate:date].floatValue / 59.0f
-                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set]; // todo // setFill?!
+                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set];
     
-    [[NSBezierPath bezierPathWithRect:NSMakeRect(0, 0, [self bounds].size.width, [self bounds].size.height)] fill];
+    [[NSBezierPath bezierPathWithRect:rect] fill];
 }
 
 @end
