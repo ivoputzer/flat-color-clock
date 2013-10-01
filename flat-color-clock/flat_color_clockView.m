@@ -16,7 +16,11 @@
     
     if (self)
     {
+        /* todo : load fonts dinamycally fron internet or bundle [hint : NSBundle, CTFontManagerRegisterFontsForURL] */
+        
         [self setAnimationTimeInterval:0.1];
+        
+        /* todo : decrease animation interval and handle color animation with something like a timer [hint : NSTimer] */
     }
     
     return self;
@@ -44,7 +48,7 @@
 
 - (void) animateOneFrame
 {
-    [self setNeedsDisplay:true]; // call drawRect and stuff each frame
+    [self setNeedsDisplay:true]; // forces drawRect to be called each iteration
     
     return;
 }
@@ -55,36 +59,43 @@
     
     NSDate *current_date = [NSDate date];
     
-    [self drawBackgroundColor:rect forDate:current_date];
+    [self drawBackgroundColorForDate:current_date];
     
-    [self drawCurrentTime:rect forDate:current_date];
-
+    [self drawCurrentTimeForDate:current_date];
 }
 
-- (void) drawCurrentTime: (NSRect) rect forDate: (NSDate*) date
+- (void) drawCurrentTimeForDate: (NSDate*) date
 {
-    NSDateFormatter *time_format = [[NSDateFormatter alloc] init]; [time_format setDateFormat:@"HH : mm : ss"];
+    NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
     
-    NSString *time = [time_format stringFromDate:date];
+    NSString *string_time = [string_format stringFromDate:date];
+  
+    // NSShadow *string_shadow = [[NSShadow alloc] init];
+    
+    // [string_shadow setShadowColor:[[NSColor blackColor] colorWithAlphaComponent:0.3]];
+    
+    // [string_shadow setShadowOffset:NSMakeSize(-2.0, -2.0)];
+    
+    // [string_shadow setShadowBlurRadius:2.0];
+    
     
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
-    [string_attributes setValue:[NSFont fontWithName:@"Verdana" size:30] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size: [self bounds].size.height / 6] forKey:NSFontAttributeName];
+
+    // [string_attributes setValue:string_shadow forKey:NSShadowAttributeName];
     
-    NSSize string_size = [time sizeWithAttributes:string_attributes];
+
+    NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
-	NSPoint center_point;
-    
-    center_point.x = (rect.size.width / 2) - (string_size.width / 2);
+	NSPoint string_point = NSMakePoint([self bounds].size.width / 2 - string_size.width / 2, [self bounds].size.height / 2 - string_size.height / 2);
 	
-    center_point.y = (rect.size.height / 2) - (string_size.height / 2);
-	
-    [time drawAtPoint:center_point withAttributes:string_attributes];
+    [string_time drawAtPoint:string_point withAttributes:string_attributes];
 }
 
-- (void) drawBackgroundColor:(NSRect) rect forDate: (NSDate*) date
+- (void) drawBackgroundColorForDate: (NSDate*) date
 {
     NSDateFormatter *hrs_format = [[NSDateFormatter alloc] init]; [hrs_format setDateFormat:@"HH"];
     NSDateFormatter *min_format = [[NSDateFormatter alloc] init]; [min_format setDateFormat:@"mm"];
@@ -92,9 +103,10 @@
     
     [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:date].floatValue / 23.0f
                                green:[min_format stringFromDate:date].floatValue / 59.0f
-                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set];
+                                blue:[sec_format stringFromDate:date].floatValue / 59.0f
+                               alpha:1.0] set];
     
-    [[NSBezierPath bezierPathWithRect:rect] fill];
+    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
 }
 
 @end
