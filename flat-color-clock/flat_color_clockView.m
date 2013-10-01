@@ -73,20 +73,6 @@
 	
     [string_attributes setValue:[NSFont fontWithName:@"Verdana" size:30] forKey:NSFontAttributeName];
     
-    // Do we really need shadows along the way?
-    
-    // NSShadow *string_shadow = [[NSShadow alloc] init];
-    
-    // [string_shadow setShadowColor:[NSColor blackColor]];
-    
-    // NSSize string_shadow_size; string_shadow_size.width = 2; string_shadow_size.height = -2;
-    
-    // [string_shadow setShadowOffset:string_shadow_size];
-    
-    // [string_shadow setShadowBlurRadius:6];
-	
-    // [string_attributes setValue:string_shadow forKey:NSShadowAttributeName];
-    
     NSSize string_size = [time sizeWithAttributes:string_attributes];
     
 	NSPoint center_point;
@@ -106,9 +92,9 @@
     
     [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:date].floatValue / 23.0f
                                green:[min_format stringFromDate:date].floatValue / 59.0f
-                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set]; // todo // setFill?!
+                                blue:[sec_format stringFromDate:date].floatValue / 59.0f alpha:1.0] set];
     
-    [[NSBezierPath bezierPathWithRect:NSMakeRect(0, 0, [self bounds].size.width, [self bounds].size.height)] fill];
+    [[NSBezierPath bezierPathWithRect:rect] fill];
 }
 
 @end
