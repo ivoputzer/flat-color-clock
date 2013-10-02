@@ -18,7 +18,7 @@
     {
         /* todo : load fonts dinamycally fron internet or bundle [hint : NSBundle, CTFontManagerRegisterFontsForURL] */
         
-        [self setAnimationTimeInterval:0.1];
+        [self setAnimationTimeInterval:1];
         
         /* todo : decrease animation interval and handle color animation with something like a timer [hint : NSTimer] */
     }
@@ -58,9 +58,9 @@
     [super drawRect:rect];
     
     NSDate *current_date = [NSDate date];
-    
-    [self drawBackgroundColorForDate:current_date];
-    
+
+    [self drawRandomBackgroundColor]; // [self drawBackgroundColorForDate:current_date];
+
     [self drawCurrentTimeForDate:current_date];
 }
 
@@ -93,6 +93,13 @@
 	NSPoint string_point = NSMakePoint([self bounds].size.width / 2 - string_size.width / 2, [self bounds].size.height / 2 - string_size.height / 2);
 	
     [string_time drawAtPoint:string_point withAttributes:string_attributes];
+}
+
+- (void) drawRandomBackgroundColor // dev
+{
+    [[NSColor colorWithCalibratedRed:drand48() green:drand48() blue:drand48() alpha:1.0] set];
+    
+    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
 }
 
 - (void) drawBackgroundColorForDate: (NSDate*) date
