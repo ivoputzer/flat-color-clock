@@ -116,7 +116,7 @@ NSDate *current_date;
 {
     [[color_prior blendedColorWithFraction:animation_progress/animation_frames ofColor:color_after] set];
     
-    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
+    [NSBezierPath fillRect:[self bounds]];
 }
 
 - (void) drawLabel
