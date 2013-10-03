@@ -62,40 +62,43 @@ NSDate *current_date;
     return nil;
 }
 
-// utility methods
-
-- (NSColor*) getColorForNow
-{
-    NSDateFormatter *h = [[NSDateFormatter alloc] init]; [h setDateFormat:@"HH"];
-    NSDateFormatter *m = [[NSDateFormatter alloc] init]; [m setDateFormat:@"mm"];
-    NSDateFormatter *s = [[NSDateFormatter alloc] init]; [s setDateFormat:@"ss"];
-    
-    return [NSColor colorWithCalibratedRed:[h stringFromDate:current_date].floatValue / 23.0f
-                                     green:[m stringFromDate:current_date].floatValue / 59.0f
-                                      blue:[s stringFromDate:current_date].floatValue / 59.0f
-                                     alpha:1.0];
-}
-
 // screensaver animation callback
 
 - (void) animateOneFrame
 {
     [self setNeedsDisplay:true]; // forces redraw each iteration
  
-    if ( animation_progress * animation_speed == 1.0f )
-    {
-        color_prior = color_after;
-        
-        color_after = [self getColorForNow];
-        
-        current_date = [NSDate date];
-
-        animation_progress = 0;
-    }
+    if ( animation_progress * animation_speed == 1.0f ) [self prepareDrawOperation];
     
     animation_progress = animation_progress + 1;
     
     return;
+}
+
+// utility methods
+
+- (void) prepareDrawOperation
+{
+    color_prior = color_after;
+    
+    color_after = [self getColorForNow];
+    
+    current_date = [NSDate date];
+    
+    animation_progress = 0;
+}
+
+- (NSColor*) getColorForNow
+{
+    NSDate* color_date = [current_date dateByAddingTimeInterval:3600.0]; // fix, colors need to be 1s ahead
+    
+    NSDateFormatter *h = [[NSDateFormatter alloc] init]; [h setDateFormat:@"HH"];
+    NSDateFormatter *m = [[NSDateFormatter alloc] init]; [m setDateFormat:@"mm"];
+    NSDateFormatter *s = [[NSDateFormatter alloc] init]; [s setDateFormat:@"ss"];
+    
+    return [NSColor colorWithCalibratedRed:[h stringFromDate:color_date].floatValue / 23.0f
+                                     green:[m stringFromDate:color_date].floatValue / 59.0f
+                                      blue:[s stringFromDate:color_date].floatValue / 59.0f alpha:1.0];
 }
 
 // drawing methods
