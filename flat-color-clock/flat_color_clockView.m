@@ -10,21 +10,37 @@
 
 @implementation flat_color_clockView
 
+const float animation_speed = 0.04f; // that's 25 fps
+
+const float animation_frames = 1 / animation_speed;
+
+float animation_progress = 0;
+
+NSColor *color_prior;
+
+NSColor *color_after;
+
+NSDate *current_date;
+
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
     
     if (self)
     {
-        /* todo : load fonts dinamycally fron internet or bundle [hint : NSBundle, CTFontManagerRegisterFontsForURL] */
+        // todo : load fonts dinamycally fron internet or bundle [hint : NSBundle, CTFontManagerRegisterFontsForURL]
         
-        [self setAnimationTimeInterval:1];
+        [self setAnimationTimeInterval:animation_speed];
+
+        color_prior = color_after = [self getColorForNow];
         
-        /* todo : decrease animation interval and handle color animation with something like a timer [hint : NSTimer] */
+        current_date = [NSDate date];
     }
     
     return self;
 }
+
+// standard methods
 
 - (void) startAnimation
 {
@@ -46,30 +62,72 @@
     return nil;
 }
 
+// utility methods
+
+- (NSColor*) getColorForNow
+{
+    NSDateFormatter *h = [[NSDateFormatter alloc] init]; [h setDateFormat:@"HH"];
+    NSDateFormatter *m = [[NSDateFormatter alloc] init]; [m setDateFormat:@"mm"];
+    NSDateFormatter *s = [[NSDateFormatter alloc] init]; [s setDateFormat:@"ss"];
+    
+    return [NSColor colorWithCalibratedRed:[h stringFromDate:current_date].floatValue / 23.0f
+                                     green:[m stringFromDate:current_date].floatValue / 59.0f
+                                      blue:[s stringFromDate:current_date].floatValue / 59.0f
+                                     alpha:1.0];
+}
+
+// screensaver animation callback
+
 - (void) animateOneFrame
 {
-    [self setNeedsDisplay:true]; // forces drawRect to be called each iteration
+    [self setNeedsDisplay:true]; // forces redraw each iteration
+ 
+    if ( animation_progress * animation_speed == 1.0f )
+    {
+        color_prior = color_after;
+        
+        color_after = [self getColorForNow];
+        
+        current_date = [NSDate date];
+
+        animation_progress = 0;
+    }
+    
+    animation_progress = animation_progress + 1;
     
     return;
 }
+
+// drawing methods
 
 - (void) drawRect:(NSRect)rect
 {
     [super drawRect:rect];
     
-    NSDate *current_date = [NSDate date];
-
-    [self drawRandomBackgroundColor]; // [self drawBackgroundColorForDate:current_date];
-
-    [self drawCurrentTimeForDate:current_date];
+    [self drawBackground];
+    
+    [self drawTimeLabel];
 }
 
-- (void) drawCurrentTimeForDate: (NSDate*) date
+- (void) drawBackground
+{
+    [[color_prior blendedColorWithFraction:animation_progress/animation_frames ofColor:color_after] set];
+    
+    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
+}
+
+- (void) drawTimeLabel
 {
     NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
     
-    NSString *string_time = [string_format stringFromDate:date];
-  
+    NSString *string_time = [string_format stringFromDate:current_date];
+    
+    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
+    
+    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
+	
+    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size: [self bounds].size.height / 6] forKey:NSFontAttributeName];
+
     // NSShadow *string_shadow = [[NSShadow alloc] init];
     
     // [string_shadow setShadowColor:[[NSColor blackColor] colorWithAlphaComponent:0.3]];
@@ -78,42 +136,13 @@
     
     // [string_shadow setShadowBlurRadius:2.0];
     
-    
-    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
-    
-    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
-	
-    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size: [self bounds].size.height / 6] forKey:NSFontAttributeName];
-
     // [string_attributes setValue:string_shadow forKey:NSShadowAttributeName];
     
-
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
 	NSPoint string_point = NSMakePoint([self bounds].size.width / 2 - string_size.width / 2, [self bounds].size.height / 2 - string_size.height / 2);
 	
     [string_time drawAtPoint:string_point withAttributes:string_attributes];
-}
-
-- (void) drawRandomBackgroundColor // dev
-{
-    [[NSColor colorWithCalibratedRed:drand48() green:drand48() blue:drand48() alpha:1.0] set];
-    
-    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
-}
-
-- (void) drawBackgroundColorForDate: (NSDate*) date
-{
-    NSDateFormatter *hrs_format = [[NSDateFormatter alloc] init]; [hrs_format setDateFormat:@"HH"];
-    NSDateFormatter *min_format = [[NSDateFormatter alloc] init]; [min_format setDateFormat:@"mm"];
-    NSDateFormatter *sec_format = [[NSDateFormatter alloc] init]; [sec_format setDateFormat:@"ss.SSS"];
-    
-    [[NSColor colorWithCalibratedRed:[hrs_format stringFromDate:date].floatValue / 23.0f
-                               green:[min_format stringFromDate:date].floatValue / 59.0f
-                                blue:[sec_format stringFromDate:date].floatValue / 59.0f
-                               alpha:1.0] set];
-    
-    [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
 }
 
 @end
