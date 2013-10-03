@@ -109,7 +109,7 @@ NSDate *current_date;
     
     [self drawBackground];
     
-    [self drawTimeLabel];
+    [self drawLabel];
 }
 
 - (void) drawBackground
@@ -119,7 +119,7 @@ NSDate *current_date;
     [[NSBezierPath bezierPathWithRect:[self bounds]] fill]; // fill background
 }
 
-- (void) drawTimeLabel
+- (void) drawLabel
 {
     NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
     
@@ -130,16 +130,6 @@ NSDate *current_date;
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
     [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size: [self bounds].size.height / 6] forKey:NSFontAttributeName];
-
-    // NSShadow *string_shadow = [[NSShadow alloc] init];
-    
-    // [string_shadow setShadowColor:[[NSColor blackColor] colorWithAlphaComponent:0.3]];
-    
-    // [string_shadow setShadowOffset:NSMakeSize(-2.0, -2.0)];
-    
-    // [string_shadow setShadowBlurRadius:2.0];
-    
-    // [string_attributes setValue:string_shadow forKey:NSShadowAttributeName];
     
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
