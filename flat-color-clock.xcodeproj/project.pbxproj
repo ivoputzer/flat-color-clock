@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92171C1417FDFCF900EE6D13 /* Century Gothic in Resources */ = {isa = PBXBuildFile; fileRef = 92171C1317FDFCF900EE6D13 /* Century Gothic */; };
 		9262DE8217F9854200FC8763 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9262DE8117F9854200FC8763 /* Cocoa.framework */; };
 		9262DE8417F9854200FC8763 /* ScreenSaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9262DE8317F9854200FC8763 /* ScreenSaver.framework */; };
 		9262DE8E17F9854200FC8763 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9262DE8C17F9854200FC8763 /* InfoPlist.strings */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		92171C1317FDFCF900EE6D13 /* Century Gothic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Century Gothic"; sourceTree = "<group>"; };
 		9262DE7E17F9854200FC8763 /* flat-color-clock.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "flat-color-clock.saver"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9262DE8117F9854200FC8763 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9262DE8317F9854200FC8763 /* ScreenSaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenSaver.framework; path = System/Library/Frameworks/ScreenSaver.framework; sourceTree = SDKROOT; };
@@ -90,6 +92,7 @@
 		9262DE8A17F9854200FC8763 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				92171C1317FDFCF900EE6D13 /* Century Gothic */,
 				9262DE8B17F9854200FC8763 /* flat-color-clock-Info.plist */,
 				9262DE8C17F9854200FC8763 /* InfoPlist.strings */,
 				9262DE8F17F9854200FC8763 /* flat-color-clock-Prefix.pch */,
@@ -160,6 +163,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92171C1417FDFCF900EE6D13 /* Century Gothic in Resources */,
 				9262DE8E17F9854200FC8763 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,6 +316,7 @@
 				9262DE9717F9854200FC8763 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
