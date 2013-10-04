@@ -45,11 +45,9 @@ NSDate *current_date;
 - (void) animateOneFrame
 {
     [self setNeedsDisplay:true]; // forces redraw each iteration
+    
+    [self prepareDrawOperation];
  
-    if ( animation_progress * animation_speed == 1.0f ) [self prepareDrawOperation];
-    
-    animation_progress = animation_progress + 1;
-    
     return;
 }
 
@@ -57,22 +55,26 @@ NSDate *current_date;
 
 - (void) prepareDrawOperation
 {
-    color_prior = color_after;
+    if ( animation_progress * animation_speed == 1.0f )
+    {
     
-    color_after = [self getColorForCurrentDate];
+        color_prior = color_after;
     
-    current_date = [NSDate date];
-    
-    animation_progress = 0;
+        current_date = [NSDate date];
+
+        color_after = [self getColorForCurrentDate];
+        
+        animation_progress = 0;
+    }
+    else
+    {
+        animation_progress = animation_progress + 1;
+    }
 }
 
 - (NSColor*) getColorForCurrentDate
-{
-    // colors need to be 1s ahead because of transition timings ~ dateByAddingTimeInterval:1.0
-    
-    NSDateComponents *components = [[NSCalendar currentCalendar]
-                                    components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit)
-                                      fromDate:[current_date dateByAddingTimeInterval:1.0]];
+{   
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:current_date];
     
     return [NSColor colorWithCalibratedRed: (float)[components hour] / 23.0f green: (float)[components minute] / 59.0f blue: (float)[components second] / 59.0f alpha:1.0];
 }
