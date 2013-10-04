@@ -9,5 +9,8 @@
 #import <ScreenSaver/ScreenSaver.h>
 
 @interface flat_color_clockView : ScreenSaverView
-
+{
+    IBOutlet id config_sheet;
+    IBOutlet id config_logger;
+}
 @end
