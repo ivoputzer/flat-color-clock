@@ -10,33 +10,34 @@
 
 @implementation flat_color_clockView
 
-const float animation_speed = 0.04f; // that's 25 fps
+const float _animation_fps = 25.0f;                   // [25.0f] animation frames per second
 
-const float animation_frames = 1 / animation_speed;
+const float _animation_vel = 1 / _animation_fps;      // [0.04f] animation velocity
 
-float animation_progress = 0;
+      float _animation_cur = 0;                       // [0.00f] generic frame counter
 
-NSColor *color_prior;
+NSColor *_color_prior;                                // [NSColor blackColor]
 
-NSColor *color_after;
+NSColor *_color_after;
 
-NSDate *current_date;
+NSDate *_current_date;
+
 
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
     
+    // todo : load font from bundle instead of using the system one
+    
     if (self)
     {
-        // todo : load fonts dinamycally fron internet or buCndle [hint : NSBundle, CTFontManagerRegisterFontsForURL]
-        
-        [self setAnimationTimeInterval:animation_speed];
+        [self setAnimationTimeInterval:_animation_vel];
 
-        current_date = [NSDate date];
+        _current_date = [NSDate date];
         
-        color_prior = [NSColor blackColor];
+        _color_prior = [NSColor blackColor];
         
-        color_after = [self getColorForCurrentDate];
+        _color_after = [self getColorForCurrentDate];
     }
     
     return self;
@@ -44,42 +45,49 @@ NSDate *current_date;
 
 - (void) animateOneFrame
 {
-    [self setNeedsDisplay:true]; // forces redraw each iteration
+    [self setNeedsDisplay:true]; // forces redraw for each animation-iteration
     
     [self prepareDrawOperation];
  
     return;
 }
 
-// utility methods
+
+// custom utility methods
 
 - (void) prepareDrawOperation
 {
-    if ( animation_progress * animation_speed == 1.0f )
+    if ( _animation_cur * _animation_vel != 1.0f )
     {
-    
-        color_prior = color_after;
-    
-        current_date = [NSDate date];
-
-        color_after = [self getColorForCurrentDate];
+        // transitioning from one second to another
         
-        animation_progress = 0;
+        _animation_cur = _animation_cur + 1; return;
     }
-    else
-    {
-        animation_progress = animation_progress + 1;
-    }
+    
+    // transition is over, reload date reference and reset counter
+    
+    _current_date = [NSDate date];
+
+    _color_prior = _color_after; // exchanging values
+    
+    _color_after = [self getColorForCurrentDate];
+        
+    _animation_cur = 0;
 }
 
 - (NSColor*) getColorForCurrentDate
-{   
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:current_date];
+{
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:_current_date];
     
     return [NSColor colorWithCalibratedRed: (float)[components hour] / 23.0f green: (float)[components minute] / 59.0f blue: (float)[components second] / 59.0f alpha:1.0];
 }
 
-// drawing methods
+- (float) width { return [self bounds].size.width; }
+
+- (float) height { return [self bounds].size.height; }
+
+
+// standard and custom drawing methods
 
 - (void) drawRect:(NSRect)rect
 {
@@ -87,21 +95,21 @@ NSDate *current_date;
     
     [self drawBackground];
     
-    [self drawLabel];
+    [self drawTimeLabel];
 }
 
 - (void) drawBackground
 {
-    [[color_prior blendedColorWithFraction:animation_progress/animation_frames ofColor:color_after] set];
+    [[_color_prior blendedColorWithFraction:_animation_cur / _animation_fps ofColor:_color_after] set];
     
     [NSBezierPath fillRect:[self bounds]];
 }
 
-- (void) drawLabel
+- (void) drawTimeLabel
 {
     NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
     
-    NSString *string_time = [string_format stringFromDate:current_date];
+    NSString *string_time = [string_format stringFromDate:_current_date];
     
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
@@ -111,31 +119,20 @@ NSDate *current_date;
     
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
-	NSPoint string_point = NSMakePoint([self bounds].size.width / 2 - string_size.width / 2, [self bounds].size.height / 2 - string_size.height / 2);
+	NSPoint string_point = NSMakePoint([self width] / 2 - string_size.width / 2, [self height] / 2 - string_size.height / 2);
 	
     [string_time drawAtPoint:string_point withAttributes:string_attributes];
 }
 
-// standard methods
 
-- (void) startAnimation
-{
-    [super startAnimation];
-}
+// unused standard callback-methods
 
-- (void) stopAnimation
-{
-    [super stopAnimation];
-}
+- (void) startAnimation { [super startAnimation]; }
 
-- (BOOL) hasConfigureSheet
-{
-    return false;
-}
+- (void) stopAnimation { [super stopAnimation]; }
 
-- (NSWindow*) configureSheet
-{
-    return nil;
-}
+- (BOOL) hasConfigureSheet { return false; }
+
+- (NSWindow*) configureSheet { return nil; }
 
 @end
