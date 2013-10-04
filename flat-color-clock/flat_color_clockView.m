@@ -28,41 +28,19 @@ NSDate *current_date;
     
     if (self)
     {
-        // todo : load fonts dinamycally fron internet or bundle [hint : NSBundle, CTFontManagerRegisterFontsForURL]
+        // todo : load fonts dinamycally fron internet or buCndle [hint : NSBundle, CTFontManagerRegisterFontsForURL]
         
         [self setAnimationTimeInterval:animation_speed];
 
-        color_prior = color_after = [self getColorForNow];
-        
         current_date = [NSDate date];
+        
+        color_prior = [NSColor blackColor];
+        
+        color_after = [self getColorForCurrentDate];
     }
     
     return self;
 }
-
-// standard methods
-
-- (void) startAnimation
-{
-    [super startAnimation];
-}
-
-- (void) stopAnimation
-{
-    [super stopAnimation];
-}
-
-- (BOOL) hasConfigureSheet
-{
-    return false;
-}
-
-- (NSWindow*) configureSheet
-{
-    return nil;
-}
-
-// screensaver animation callback
 
 - (void) animateOneFrame
 {
@@ -81,24 +59,22 @@ NSDate *current_date;
 {
     color_prior = color_after;
     
-    color_after = [self getColorForNow];
+    color_after = [self getColorForCurrentDate];
     
     current_date = [NSDate date];
     
     animation_progress = 0;
 }
 
-- (NSColor*) getColorForNow
+- (NSColor*) getColorForCurrentDate
 {
-    NSDate* color_date = [current_date dateByAddingTimeInterval:3600.0]; // fix, colors need to be 1s ahead
+    // colors need to be 1s ahead because of transition timings ~ dateByAddingTimeInterval:1.0
     
-    NSDateFormatter *h = [[NSDateFormatter alloc] init]; [h setDateFormat:@"HH"];
-    NSDateFormatter *m = [[NSDateFormatter alloc] init]; [m setDateFormat:@"mm"];
-    NSDateFormatter *s = [[NSDateFormatter alloc] init]; [s setDateFormat:@"ss"];
+    NSDateComponents *components = [[NSCalendar currentCalendar]
+                                    components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit)
+                                      fromDate:[current_date dateByAddingTimeInterval:1.0]];
     
-    return [NSColor colorWithCalibratedRed:[h stringFromDate:color_date].floatValue / 23.0f
-                                     green:[m stringFromDate:color_date].floatValue / 59.0f
-                                      blue:[s stringFromDate:color_date].floatValue / 59.0f alpha:1.0];
+    return [NSColor colorWithCalibratedRed: (float)[components hour] / 23.0f green: (float)[components minute] / 59.0f blue: (float)[components second] / 59.0f alpha:1.0];
 }
 
 // drawing methods
@@ -136,6 +112,28 @@ NSDate *current_date;
 	NSPoint string_point = NSMakePoint([self bounds].size.width / 2 - string_size.width / 2, [self bounds].size.height / 2 - string_size.height / 2);
 	
     [string_time drawAtPoint:string_point withAttributes:string_attributes];
+}
+
+// standard methods
+
+- (void) startAnimation
+{
+    [super startAnimation];
+}
+
+- (void) stopAnimation
+{
+    [super stopAnimation];
+}
+
+- (BOOL) hasConfigureSheet
+{
+    return false;
+}
+
+- (NSWindow*) configureSheet
+{
+    return nil;
 }
 
 @end
