@@ -96,11 +96,13 @@ NSDate *_current_date;
     [self drawBackground];
     
     [self drawTimeLabel];
+
+    [self drawColorLabel];
 }
 
 - (void) drawBackground
 {
-    [[_color_prior blendedColorWithFraction:_animation_cur / _animation_fps ofColor:_color_after] set];
+    [[_color_prior blendedColorWithFraction:_animation_cur/_animation_fps ofColor:_color_after] set];
     
     [NSBezierPath fillRect:[self bounds]];
 }
@@ -115,7 +117,7 @@ NSDate *_current_date;
     
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
-    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size: [self bounds].size.height / 6] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size:[self height] / 6] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
@@ -124,6 +126,22 @@ NSDate *_current_date;
     [string_time drawAtPoint:string_point withAttributes:string_attributes];
 }
 
+- (void) drawColorLabel
+{
+    NSString *string_rgb = [NSString stringWithFormat:@"RGB(%i,%i,%i)", (int)(255*[_color_after redComponent]), (int)(255*[_color_after greenComponent]), (int)(255*[_color_after blueComponent])];
+    
+    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
+    
+    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
+	
+    [string_attributes setValue:[NSFont fontWithName:@"Arial" size:[self height] / 35] forKey:NSFontAttributeName];
+    
+    NSSize string_size = [string_rgb sizeWithAttributes:string_attributes];
+    
+	NSPoint string_point = NSMakePoint([self width] / 2 - string_size.width / 2, 10);
+	
+    [string_rgb drawAtPoint:string_point withAttributes:string_attributes];
+}
 
 // unused standard callback-methods
 
