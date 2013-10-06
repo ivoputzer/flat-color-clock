@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		92171C1617FE01E800EE6D13 /* CenturyGothic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92171C1517FE01E800EE6D13 /* CenturyGothic.ttf */; };
-		92171C1A17FE93F900EE6D13 /* ConfigureSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92171C1917FE93F900EE6D13 /* ConfigureSheet.xib */; };
+		92171C2018017C5D00EE6D13 /* TR Century Gothic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92171C1F18017C5D00EE6D13 /* TR Century Gothic.ttf */; };
 		9262DE8217F9854200FC8763 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9262DE8117F9854200FC8763 /* Cocoa.framework */; };
 		9262DE8417F9854200FC8763 /* ScreenSaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9262DE8317F9854200FC8763 /* ScreenSaver.framework */; };
 		9262DE8E17F9854200FC8763 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9262DE8C17F9854200FC8763 /* InfoPlist.strings */; };
@@ -16,8 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		92171C1517FE01E800EE6D13 /* CenturyGothic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CenturyGothic.ttf; sourceTree = "<group>"; };
-		92171C1917FE93F900EE6D13 /* ConfigureSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ConfigureSheet.xib; path = ../ConfigureSheet.xib; sourceTree = "<group>"; };
+		92171C1F18017C5D00EE6D13 /* TR Century Gothic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TR Century Gothic.ttf"; sourceTree = "<group>"; };
 		9262DE7E17F9854200FC8763 /* flat-color-clock.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "flat-color-clock.saver"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9262DE8117F9854200FC8763 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9262DE8317F9854200FC8763 /* ScreenSaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenSaver.framework; path = System/Library/Frameworks/ScreenSaver.framework; sourceTree = SDKROOT; };
@@ -44,6 +42,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		92171C2118017C6200EE6D13 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				92171C1F18017C5D00EE6D13 /* TR Century Gothic.ttf */,
+			);
+			name = Fonts;
+			sourceTree = "<group>";
+		};
 		9262DE7317F9854200FC8763 = {
 			isa = PBXGroup;
 			children = (
@@ -94,8 +100,7 @@
 		9262DE8A17F9854200FC8763 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				92171C1917FE93F900EE6D13 /* ConfigureSheet.xib */,
-				92171C1517FE01E800EE6D13 /* CenturyGothic.ttf */,
+				92171C2118017C6200EE6D13 /* Fonts */,
 				9262DE8B17F9854200FC8763 /* flat-color-clock-Info.plist */,
 				9262DE8C17F9854200FC8763 /* InfoPlist.strings */,
 				9262DE8F17F9854200FC8763 /* flat-color-clock-Prefix.pch */,
@@ -167,8 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9262DE8E17F9854200FC8763 /* InfoPlist.strings in Resources */,
-				92171C1A17FE93F900EE6D13 /* ConfigureSheet.xib in Resources */,
-				92171C1617FE01E800EE6D13 /* CenturyGothic.ttf in Resources */,
+				92171C2018017C5D00EE6D13 /* TR Century Gothic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
