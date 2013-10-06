@@ -20,6 +20,13 @@ NSColor *_color_prior, *_color_after;
 
 NSDate *_current_date;
 
+-(void) log: (NSString*)m
+{
+    NSString *s = [NSString stringWithFormat:@"echo \"%@\" >> /Users/ivo/Documents/workspace/flat-color-clock/.app-logs", m];
+    
+    [[NSTask launchedTaskWithLaunchPath:@"/bin/sh" arguments:[NSArray arrayWithObjects:@"-c", s, nil]] waitUntilExit];
+}
+
 
 // screensaver initialisation methods
 
@@ -34,8 +41,12 @@ NSDate *_current_date;
         _color_prior = [NSColor blackColor];
         
         _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]];
+        
+        [self log:@"-------------------------------------------------------------"];
+                
+        [self log: [[[[NSFontManager sharedFontManager] availableFontFamilies] description] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
     }
-    
+
     return self;
 }
 
@@ -62,9 +73,7 @@ NSDate *_current_date;
 {
     if ( [self isTransitioning] ){ _animation_cur = _animation_cur + 1; return; }
     
-    _color_prior = _color_after; _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]]; // swap color values
-        
-    _animation_cur = 0;
+    _animation_cur = 0; _color_prior = _color_after; _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]];
 }
 
 - (NSColor*) getColorForCurrentDate:(NSDate*) date
@@ -81,7 +90,7 @@ NSDate *_current_date;
 {
     [super drawRect:rect];
     
-    [self drawBackground]; [self drawTimeLabel]; [self drawColorLabel];
+    [self drawBackground]; [self drawTimeLabel]; [self drawColorInfoLabel];
 }
 
 - (void) drawBackground
@@ -93,34 +102,25 @@ NSDate *_current_date;
 
 - (void) drawTimeLabel
 {
-    // date formatting
-    
-    NSDateFormatter *string_format = [[NSDateFormatter alloc] init];
-    
-    [string_format setDateFormat:@"HH· mm· ss"];
+    NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH · mm · ss"];
     
     NSString *string_time = [string_format stringFromDate:_current_date];
-    
-    // string attributes
     
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
-    [string_attributes setValue:[NSFont fontWithName:@"Century Gothic" size:[self height] / 6] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:@"TR Century Gothic" size:[self height] / 6] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
-    
-    // string drawing
     
     [string_time drawAtPoint:NSMakePoint([self width] / 2 - string_size.width / 2, [self height] / 2 - string_size.height / 2) withAttributes:string_attributes];
 }
 
-- (void) drawColorLabel
+- (void) drawColorInfoLabel
 {
-    NSString *string_rgb = [NSString stringWithFormat:@"R : %i G : %i B : %i",
-                            (int)(255 * [_color_after redComponent]), (int)(255 * [_color_after greenComponent]), (int)(255 * [_color_after blueComponent])];
-    
+    NSString *string_rgb = [NSString stringWithFormat:@"R %03i · G %03i · B %03i", (int)(255 * [_color_after redComponent]), (int)(255 * [_color_after greenComponent]), (int)(255 * [_color_after blueComponent])];
+
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
     [string_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:0.5] forKey:NSForegroundColorAttributeName];

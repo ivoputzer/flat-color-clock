@@ -28,7 +28,7 @@
 	<string>flat_color_clockView</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>CenturyGothic.ttf</string>
+		<string>TR-Century-Gothic.ttf</string>
 	</array>
 </dict>
 </plist>
