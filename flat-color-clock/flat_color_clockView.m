@@ -23,6 +23,7 @@ NSColor *_color_after;
 NSDate *_current_date;
 
 
+
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
     self = [super initWithFrame:frame isPreview:isPreview];
@@ -43,12 +44,15 @@ NSDate *_current_date;
     return self;
 }
 
+
+// screensaver animation callback
+
 - (void) animateOneFrame
 {
     [self setNeedsDisplay:true]; // forces redraw for each animation-iteration
     
     [self prepareDrawOperation];
- 
+    
     return;
 }
 
@@ -134,6 +138,7 @@ NSDate *_current_date;
     
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
+
     [string_attributes setValue:[NSFont fontWithName:@"Arial" size:[self height] / 35] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_rgb sizeWithAttributes:string_attributes];

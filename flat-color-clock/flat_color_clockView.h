@@ -9,5 +9,7 @@
 #import <ScreenSaver/ScreenSaver.h>
 
 @interface flat_color_clockView : ScreenSaverView
+{
 
+}
 @end

@@ -26,5 +26,9 @@
 	<string>Copyright © 2013 Ivo von Putzer Reibegg. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>flat_color_clockView</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>CenturyGothic.ttf</string>
+	</array>
 </dict>
 </plist>
