@@ -10,19 +10,13 @@
 
 @implementation flat_color_clockView
 
-const float _animation_fps = 25.0f;                   // [25.0f] animation frames per second
+const int _animation_fps = 25; // [25] animation frames per second
 
-const float _animation_vel = 1 / _animation_fps;      // [0.04f] animation velocity
+      int _animation_cur = 0;  // [0] generic frame counter
 
-      float _animation_cur = 0;                       // [0.00f] generic frame counter
+NSColor *_color_prior, *_color, *_color_after;
 
-NSString *_animation_font = @"Century Gothic";
-
-NSColor *_color_prior, *_color_after;
-
-NSDate *_current_date;
-
-// screensaver initialisation methods
+NSDate  *_date;
 
 - (id) initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
@@ -30,106 +24,120 @@ NSDate *_current_date;
     
     if (self)
     {
-        [self setAnimationTimeInterval:_animation_vel];
+        [self setAnimationTimeInterval:1.0 / _animation_fps];
         
         _color_prior = [NSColor blackColor];
         
-        _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]];
+        _color_after = [self color];
     }
 
     return self;
 }
 
-
-// screensaver animation callbacks
-
-- (void) animateOneFrame
-{
-    [self setNeedsDisplay:true]; // forces redraw for each animation-iteration
+- (void) animateOneFrame {
     
-    [self prepareDrawOperation];
-}
-
-
-// custom utility methods
-
-- (BOOL) isTransitioning { return 1.0 != (_animation_cur * _animation_vel); }
-
-- (float) width { return [self bounds].size.width; }
-
-- (float) height { return [self bounds].size.height; }
-
-- (void) prepareDrawOperation
-{
-    if ( [self isTransitioning] ){ _animation_cur = _animation_cur + 1; return; }
+    [self setNeedsDisplay:true];
     
-    _animation_cur = 0; _color_prior = _color_after; _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]];
+    [self prepareToDraw];
 }
-
-- (NSColor*) getColorForCurrentDate:(NSDate*) date
-{
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:date];
-    
-    return [NSColor colorWithCalibratedRed:(float)[components hour] / 23.0f green:(float)[components minute] / 59.0f blue:(float)[components second] / 59.0f alpha:1.0];
-}
-
-
-// standard and custom drawing methods
 
 - (void) drawRect:(NSRect)rect
 {
     [super drawRect:rect];
     
-    [self drawBackground]; [self drawTimeLabel]; [self drawColorInfoLabel];
+    [self drawBackground];
+    
+    [self drawColorInfoLabel];
+    
+    [self drawTimeLabel];
+}
+
+- (void) prepareToDraw
+{
+    _animation_cur = _animation_cur + 1;
+    
+    if ( 0 == _animation_cur % _animation_fps )
+    {
+        _color_prior = _color_after;
+        
+        _color_after = [self color];
+    }
 }
 
 - (void) drawBackground
 {
-    [[_color_prior blendedColorWithFraction:_animation_cur/_animation_fps ofColor:_color_after] set];
+    [_color = [_color_prior blendedColorWithFraction: (float) (_animation_cur % _animation_fps) / (float) _animation_fps ofColor:_color_after] set];
     
     [NSBezierPath fillRect:[self bounds]];
 }
 
 - (void) drawTimeLabel
 {
-    NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
+    NSDateFormatter *time_format = [[NSDateFormatter alloc] init];
     
-    NSString *string_time = [string_format stringFromDate:_current_date];
+    [time_format setDateFormat:@"HH· mm· ss"];
     
-    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
+    NSString *time = [time_format stringFromDate:_date];
     
-    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
+    NSMutableDictionary *str_attributes = [[NSMutableDictionary alloc] init];
+    
+    [str_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:1] forKey:NSForegroundColorAttributeName];
 	
-    [string_attributes setValue:[NSFont fontWithName:_animation_font size:[self height] / 6] forKey:NSFontAttributeName];
+    [str_attributes setValue:[NSFont fontWithName:@"Century Gothic" size:[self height] / 6] forKey:NSFontAttributeName];
     
-    NSSize string_size = [string_time sizeWithAttributes:string_attributes];
+    NSSize str_size = [time sizeWithAttributes:str_attributes];
     
-    [string_time drawAtPoint:NSMakePoint([self width] / 2 - string_size.width / 2, [self height] / 2 - string_size.height / 2) withAttributes:string_attributes];
+    [time drawAtPoint:NSMakePoint([self width] / 2 - str_size.width / 2, [self height] / 2 - str_size.height / 2) withAttributes:str_attributes];
 }
 
 - (void) drawColorInfoLabel
 {
-    NSString *string_rgb = [NSString stringWithFormat:@"R %03i· G %03i· B %03i", (int)(255 * [_color_after redComponent]), (int)(255 * [_color_after greenComponent]), (int)(255 * [_color_after blueComponent])];
+    NSString *info = [NSString stringWithFormat:@"R %03.0f· G %03.0f· B %03.0f", 255 * [_color redComponent], 255 * [_color greenComponent], 255 * [_color blueComponent]];
+    
+    NSMutableDictionary *str_attributes = [[NSMutableDictionary alloc] init];
+    
+    [str_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:1] forKey:NSForegroundColorAttributeName];
 
-    NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
+    [str_attributes setValue:[NSFont fontWithName:@"Century Gothic" size:[self height] / 50] forKey:NSFontAttributeName];
     
-    [string_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:0.5] forKey:NSForegroundColorAttributeName];
-
-    [string_attributes setValue:[NSFont fontWithName:_animation_font size:[self height] / 50] forKey:NSFontAttributeName];
-    
-    NSSize string_size = [string_rgb sizeWithAttributes:string_attributes];
-    
-    [string_rgb drawAtPoint:NSMakePoint([self width] - (string_size.width + 10), 10) withAttributes:string_attributes];
+    [info drawAtPoint:NSMakePoint([self width] - ([info sizeWithAttributes:str_attributes].width + 10), 10) withAttributes:str_attributes];
 }
 
-// unused standard callback-methods
+- (NSColor*) color
+{
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:_date = [NSDate date]];
+    
+    return [NSColor colorWithCalibratedRed:[components hour] / 23.0 green:[components minute] / 59.0 blue:[components second] / 59.0 alpha:1.0];
+}
 
-- (void) startAnimation { [super startAnimation]; }
+- (float) width
+{
+    return [self bounds].size.width;
+}
 
-- (void) stopAnimation { [super stopAnimation]; }
+- (float) height
+{
+    return [self bounds].size.height;
+}
 
-- (BOOL) hasConfigureSheet { return false; }
+- (void) startAnimation
+{
+    [super startAnimation];
+}
 
-- (NSWindow*) configureSheet { return nil; }
+- (void) stopAnimation
+{
+    [super stopAnimation];
+}
+
+- (BOOL) hasConfigureSheet
+{
+    return false;
+}
+
+- (NSWindow*) configureSheet
+{
+    return nil;
+}
 
 @end
