@@ -16,17 +16,11 @@ const float _animation_vel = 1 / _animation_fps;      // [0.04f] animation veloc
 
       float _animation_cur = 0;                       // [0.00f] generic frame counter
 
+NSString *_animation_font = @"Century Gothic";
+
 NSColor *_color_prior, *_color_after;
 
 NSDate *_current_date;
-
--(void) log: (NSString*)m
-{
-    NSString *s = [NSString stringWithFormat:@"echo \"%@\" >> /Users/ivo/Documents/workspace/flat-color-clock/.app-logs", m];
-    
-    [[NSTask launchedTaskWithLaunchPath:@"/bin/sh" arguments:[NSArray arrayWithObjects:@"-c", s, nil]] waitUntilExit];
-}
-
 
 // screensaver initialisation methods
 
@@ -41,10 +35,6 @@ NSDate *_current_date;
         _color_prior = [NSColor blackColor];
         
         _color_after = [self getColorForCurrentDate: _current_date = [NSDate date]];
-        
-        [self log:@"-------------------------------------------------------------"];
-                
-        [self log: [[[[NSFontManager sharedFontManager] availableFontFamilies] description] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
     }
 
     return self;
@@ -102,7 +92,7 @@ NSDate *_current_date;
 
 - (void) drawTimeLabel
 {
-    NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH · mm · ss"];
+    NSDateFormatter *string_format = [[NSDateFormatter alloc] init]; [string_format setDateFormat:@"HH· mm· ss"];
     
     NSString *string_time = [string_format stringFromDate:_current_date];
     
@@ -110,7 +100,7 @@ NSDate *_current_date;
     
     [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
 	
-    [string_attributes setValue:[NSFont fontWithName:@"TR Century Gothic" size:[self height] / 6] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:_animation_font size:[self height] / 6] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_time sizeWithAttributes:string_attributes];
     
@@ -119,13 +109,13 @@ NSDate *_current_date;
 
 - (void) drawColorInfoLabel
 {
-    NSString *string_rgb = [NSString stringWithFormat:@"R %03i · G %03i · B %03i", (int)(255 * [_color_after redComponent]), (int)(255 * [_color_after greenComponent]), (int)(255 * [_color_after blueComponent])];
+    NSString *string_rgb = [NSString stringWithFormat:@"R %03i· G %03i· B %03i", (int)(255 * [_color_after redComponent]), (int)(255 * [_color_after greenComponent]), (int)(255 * [_color_after blueComponent])];
 
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
     [string_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:0.5] forKey:NSForegroundColorAttributeName];
 
-    [string_attributes setValue:[NSFont fontWithName:@"Arial" size:[self height] / 50] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:_animation_font size:[self height] / 50] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_rgb sizeWithAttributes:string_attributes];
     
