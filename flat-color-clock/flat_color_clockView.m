@@ -10,7 +10,7 @@
 
 @implementation flat_color_clockView
 
-const float _animation_fps = 25.0f;                   // [25.0f] animation frames per second
+const float _animation_fps = 60.0f;                   // [25.0f] animation frames per second
 
 const float _animation_vel = 1 / _animation_fps;      // [0.04f] animation velocity
 
@@ -132,18 +132,20 @@ NSDate *_current_date;
 
 - (void) drawColorLabel
 {
-    NSString *string_rgb = [NSString stringWithFormat:@"RGB(%i,%i,%i)", (int)(255*[_color_after redComponent]), (int)(255*[_color_after greenComponent]), (int)(255*[_color_after blueComponent])];
+    NSString *string_rgb = [NSString stringWithFormat:@"R : %i G : %i B : %i",
+                            (int)(255*[_color_after redComponent]),
+                            (int)(255*[_color_after greenComponent]),
+                            (int)(255*[_color_after blueComponent])];
     
     NSMutableDictionary *string_attributes = [[NSMutableDictionary alloc] init];
     
-    [string_attributes setValue:[NSColor whiteColor] forKey:NSForegroundColorAttributeName];
-	
+    [string_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:0.5] forKey:NSForegroundColorAttributeName];
 
-    [string_attributes setValue:[NSFont fontWithName:@"Arial" size:[self height] / 35] forKey:NSFontAttributeName];
+    [string_attributes setValue:[NSFont fontWithName:@"Arial" size:[self height] / 50] forKey:NSFontAttributeName];
     
     NSSize string_size = [string_rgb sizeWithAttributes:string_attributes];
     
-	NSPoint string_point = NSMakePoint([self width] / 2 - string_size.width / 2, 10);
+	NSPoint string_point = NSMakePoint([self width] - (string_size.width + 10), 10);
 	
     [string_rgb drawAtPoint:string_point withAttributes:string_attributes];
 }
