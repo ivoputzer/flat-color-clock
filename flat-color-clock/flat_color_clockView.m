@@ -92,11 +92,11 @@ NSDate  *_date;
 
 - (void) drawColorInfoLabel
 {
-    NSString *info = [NSString stringWithFormat:@"R %03.0f· G %03.0f· B %03.0f", 255 * [_color redComponent], 255 * [_color greenComponent], 255 * [_color blueComponent]];
+    NSString *info = [NSString stringWithFormat:@"R%03.0f G%03.0f B%03.0f", 255 * [_color redComponent], 255 * [_color greenComponent], 255 * [_color blueComponent]];
     
     NSMutableDictionary *str_attributes = [[NSMutableDictionary alloc] init];
     
-    [str_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:1] forKey:NSForegroundColorAttributeName];
+    [str_attributes setValue:[NSColor colorWithCalibratedWhite:1 alpha:0.5] forKey:NSForegroundColorAttributeName];
 
     [str_attributes setValue:[NSFont fontWithName:@"Century Gothic" size:[self height] / 50] forKey:NSFontAttributeName];
     
